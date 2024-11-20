@@ -25,7 +25,7 @@ import {
 
 const Page = () => {
   const [agentName, setAgentName] = useState("Agent Name");
-  const [agentData, setAgentData] = useState<object | null>(null);
+  const [agentData, setAgentData] = useState<object[] | null>(null);
   const [agentLlmId, setAgentLlmId] = useState("");
   const [selectedSection, setSelectedSection] = useState("voice");
   const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +39,11 @@ const Page = () => {
 
   const indexOfLastAgent = currentPage * agentsPerPage;
   const indexOfFirstAgent = indexOfLastAgent - agentsPerPage;
-  const currentAgents = agentData?.slice(indexOfFirstAgent, indexOfLastAgent);
+  const currentAgents = Array.prototype.slice.call(
+    agentData,
+    indexOfFirstAgent,
+    indexOfLastAgent
+  );
 
   useEffect(() => {
     const fetchData = async () => {
