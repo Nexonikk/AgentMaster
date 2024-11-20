@@ -9,5 +9,12 @@
         "installCommand": "npm install --legacy-peer-deps"
       }
     }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "index.html",
+      "cache": false
+    }
   ]
 }
