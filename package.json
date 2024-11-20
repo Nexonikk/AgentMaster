@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "vercel-build": "npm install --legacy-peer-deps && npm run build",
-    "dev": "next dev",
     "build": "next build",
-    "start": "npm run vercel-build && vercel start",
+    "start": "next start",
+    "vercel-build": "npm install --legacy-peer-deps && next build",
+    "dev": "next dev",
     "lint": "next lint"
   },
   "dependencies": {
