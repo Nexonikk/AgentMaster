@@ -23,9 +23,20 @@ import {
   // PaginationPrevious,
 } from "@/components/ui/pagination";
 
+interface Agent {
+  agent_id: string;
+  agent_name: string | null | undefined;
+  response_engine: {
+    llm_id: string;
+  };
+}
+
 const Page = () => {
-  const [agentName, setAgentName] = useState("Agent Name");
-  const [agentData, setAgentData] = useState<object[] | null>(null);
+  const [agentName, setAgentName] = useState<string | null | undefined>(
+    "Agent Name"
+  );
+  // const [agentName, setAgentName] = useState("Agent Name");
+  const [agentData, setAgentData] = useState<Agent[] | null>([]);
   const [agentLlmId, setAgentLlmId] = useState("");
   const [selectedSection, setSelectedSection] = useState("voice");
   const [isEditing, setIsEditing] = useState(false);
@@ -39,17 +50,16 @@ const Page = () => {
 
   const indexOfLastAgent = currentPage * agentsPerPage;
   const indexOfFirstAgent = indexOfLastAgent - agentsPerPage;
-  const currentAgents = Array.prototype.slice.call(
-    agentData,
-    indexOfFirstAgent,
-    indexOfLastAgent
-  );
+  // const currentAgents = Array.prototype.slice.call(
+  //   agentData,
+  //   indexOfFirstAgent,
+  //   indexOfLastAgent
+  // );
 
   useEffect(() => {
     const fetchData = async () => {
       const { agentResponses } = await main();
-      // const responses = await main();
-      setAgentData(agentResponses);
+      setAgentData(agentResponses as Agent[]);
       setTotalPages(Math.ceil(agentResponses.length / agentsPerPage));
     };
     fetchData();
@@ -92,19 +102,22 @@ const Page = () => {
                 <div className="space-y-2">
                   <h3 className="font-medium">English</h3>
                   <div className="space-y-2">
-                    {currentAgents?.map((data) => (
-                      <div
-                        key={data.agent_id}
-                        className="flex items-center justify-between p-2 rounded-lg hover:bg-accent cursor-pointer"
-                        onClick={() => {
-                          setLlmResponse(null);
-                          setAgentName(data.agent_name);
-                          setAgentLlmId(data.response_engine.llm_id);
-                        }}
-                      >
-                        <span>{data.agent_name}</span>
-                      </div>
-                    ))}
+                    {agentData &&
+                      agentData
+                        .slice(indexOfFirstAgent, indexOfLastAgent)
+                        ?.map((data) => (
+                          <div
+                            key={data.agent_id}
+                            className="flex items-center justify-between p-2 rounded-lg hover:bg-accent cursor-pointer"
+                            onClick={() => {
+                              setLlmResponse(null);
+                              setAgentName(data.agent_name);
+                              setAgentLlmId(data.response_engine.llm_id);
+                            }}
+                          >
+                            <span>{data.agent_name}</span>
+                          </div>
+                        ))}
                   </div>
                 </div>
               </div>
@@ -202,7 +215,7 @@ const Page = () => {
           <div className="flex items-center space-x-4">
             {isEditing ? (
               <Input
-                value={agentName}
+                value={agentName ?? ""}
                 onChange={(e) => setAgentName(e.target.value)}
                 onBlur={() => setIsEditing(false)}
                 className="w-48"
